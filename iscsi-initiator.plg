@@ -1,0 +1,176 @@
+<?xml version='1.0' standalone='yes'?>
+<!DOCTYPE PLUGIN [
+<!ENTITY name      "iscsi-initiator">
+<!ENTITY author    "ich777">
+<!ENTITY version   "2021.08.23">
+<!ENTITY md5       "aaa40ee615a084e56dec6651579b48a5">
+<!ENTITY launch    "Settings/&name;-main">
+<!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
+<!ENTITY plugin    "/boot/config/plugins/&name;">
+<!ENTITY pluginURL "https://raw.githubusercontent.com/ich777/&name;/master/&name;.plg">
+]>
+
+<PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.10.0-rc2d" support="https://forums.unraid.net/topic/108650-plugin-intel-gvt-g/">
+
+<CHANGES>
+
+###2021.08.31
+- Initial Release
+
+</CHANGES>
+
+<FILE Run="/bin/bash">
+<INLINE>
+rm -f $(ls &plugin;/iscsi.initiator*.txz 2>/dev/null|grep -v '&version;')
+</INLINE>
+</FILE>
+
+<FILE Name="&plugin;/iscsi.initiator-&version;.txz" Run="upgradepkg --install-new">
+<URL>https://raw.githubusercontent.com/ich777/&name;/master/packages/iscsi-initiator-&version;.txz</URL>
+<MD5>&md5;</MD5>
+</FILE>
+
+<FILE Name="&plugdir;/README.md">
+<INLINE>
+**iSCSI Initiator**
+
+Missing
+</INLINE>
+</FILE>
+
+<FILE Run="/bin/bash">
+<INLINE>
+
+#Create initiator file if not found
+if [ ! -f "&plugin;/initiatorname.cfg" ]; then
+  echo "InitiatorName=iqn.2005-08.net.unraid:$(uuidgen -r)" > "&plugin;/initiatorname.cfg"
+fi
+
+#Create config file if not found
+if [ ! -f "&plugin;/iscsid.conf" ]; then
+  cp /etc/iscsi/iscsid.conf &plugin;/iscsid.conf
+else
+  rm -rf /etc/iscsi/iscsid.conf
+fi
+
+#Create targets file if not found
+if [ ! -f "&plugin;/targets.cfg" ]; then
+  touch &plugin;/targets.cfg
+fi
+
+#Wait for Network and timeout after 30 seconds
+HOST="8.8.8.8"
+for i in {1..10}; do
+  ping -c1 $HOST &amp;> /dev/null &amp;&amp; break;
+done
+
+KERNEL_V="$(uname -r)"
+PACKAGE="open_iscsi-plugin-${KERNEL_V}"
+DL_URL="https://github.com/ich777/iscsi-initiator/releases/download/$KERNEL_V"
+
+#Check for old packages
+rm -rf $(ls -d &plugin;/packages/* | grep -v "${KERNEL_V%%-*}")
+
+download() {
+#Download Open-iSCSI Package
+if wget -q -nc --show-progress --progress=bar:force:noscroll -O "&plugin;/packages/${KERNEL_V%%-*}/${PACKAGE}-1.txz" "${DL_URL}/${PACKAGE}-1.txz" ; then
+  if [ "$(md5sum "&plugin;/packages/${KERNEL_V%%-*}/${PACKAGE}-1.txz" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${PACKAGE}-1.txz.md5" | cut -d ' ' -f1)" ]; then
+    echo
+    echo "---CHECKSUM ERROR!---"
+    exit 1
+  fi
+  echo
+  echo "-------Successfully downloaded Open iSCSI, please wait...!------"
+else
+  echo
+  echo "-------------------Can't download Open iSCSI--------------------"
+  exit 1
+fi
+}
+
+check() {
+if [ ! -f "&plugin;/packages/${KERNEL_V%%-*}/${PACKAGE}-1.txz" ]; then
+  echo
+  echo "--------------------Downloading Open iSCSI---------------------"
+  echo "---This could take some time, please don't close this window!---"
+  download
+elif [ ! -s "&plugin;/packages/${KERNEL_V%%-*}/${PACKAGE}-1.txz" ]; then
+  rm -rf &plugin;/packages/${KERNEL_V%%-*}/${PACKAGE}-1.txz
+  echo
+  echo "----Download is empty please contact the developer of this plugin if the----"
+  echo "----------plugin has been already built against that Kernel version---------"
+  exit 1
+else
+  echo
+  echo "------------Open iSCSI found locally, please wait...!----------"
+fi
+}
+
+install() {
+#Install Open iSCSI Package
+/sbin/installpkg "&plugin;/packages/${KERNEL_V%%-*}/${PACKAGE}-1.txz"
+depmod -a
+/sbin/modprobe iscsi_tcp
+sleep 1
+iscsid --config=&plugin;/iscsid.conf --initiatorname=&plugin;/initiatorname.cfg
+}
+
+load_targets() {
+while read -r line
+do
+  TARGET_IQN="$(cat &plugin;/targets.cfg | awk '{print $1}')"
+  TARGET_IP="$(cat &plugin;/targets.cfg | awk '{print $2}')"
+  TARGET_PORT="$(cat &plugin;/targets.cfg | awk '{print $3}')"
+  echo "---Trying to connect to target: ${TARGET_IQN} through ${TARGET_IP}:${TARGET_PORT}"
+  iscsiadm -m discovery -t sendtargets -p ${TARGET_IP}:${TARGET_PORT}
+  sleep 0.5
+  iscsiadm -m node -T ${TARGET_IQN} -p ${TARGET_IP}:${TARGET_PORT} --login
+  sleep 0.5
+done &lt; "&plugin;/targets.cfg"
+}
+
+#Check if Open iSCSI Package are already downloaded
+check
+
+#Check if iSCSI initiator module is already enabled
+if [ -z "$(lsmod | grep "iscsi_tcp")" ]; then
+  echo
+  echo "-----Installing and loading Kernel Modulesfor Open-iSCSI------"
+  install > /dev/null
+  if [ ! -z &plugin;/targets.cfg ]; then
+    load_targets
+  fi
+else
+  echo
+  echo "----------------Kernel Modules already enabled----------------"
+fi
+
+
+echo
+echo "-------------Installation of Open iSCSI successful-------------"
+echo
+
+echo
+echo "----------------------------------------------------------------"
+echo "-----------------Open iSCSI plugin installed--------------------"
+echo "----------------------------------------------------------------"
+</INLINE>
+</FILE>
+
+
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+echo "------------------------------------"
+echo "---Uninstalling Open iSCSI plugin---"
+echo "------------------------------------"
+# Remove plugin related files
+rm -rf &emhttp;
+rm -rf &plugin;
+echo
+echo "--------------------------------------------------------"
+echo "---Open iSCSI uninstalled, please reboot your server!---"
+echo "--------------------------------------------------------"
+echo
+</INLINE>
+</FILE>
+</PLUGIN>
