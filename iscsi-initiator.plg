@@ -164,7 +164,6 @@ echo "------------------------------------"
 echo "---Uninstalling Open iSCSI plugin---"
 echo "------------------------------------"
 # Remove plugin related files
-rm -rf &emhttp;
 rm -rf &plugin;
 echo
 echo "--------------------------------------------------------"
