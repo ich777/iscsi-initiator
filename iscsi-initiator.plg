@@ -4,7 +4,7 @@
 <!ENTITY author    "ich777">
 <!ENTITY version   "2021.09.01">
 <!ENTITY md5       "5da00f51862bf717743e33f98a93c09c">
-<!ENTITY launch    "Settings/&name;-main">
+<!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY plugin    "/boot/config/plugins/&name;">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/ich777/&name;/master/&name;.plg">
@@ -167,8 +167,15 @@ echo "----------------------------------------------------------------"
 echo "------------------------------------"
 echo "---Uninstalling Open iSCSI plugin---"
 echo "------------------------------------"
+echo
+echo "Logging out from all connected iSCSI sessions!"
+echo
+iscsiadm -m node --logout
+sleep 0.5
+kill $(pidof iscsid)
 # Remove plugin related files
 rm -rf &plugin;
+rm -rf &plugdir;
 echo
 echo "--------------------------------------------------------"
 echo "---Open iSCSI uninstalled, please reboot your server!---"
