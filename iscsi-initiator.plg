@@ -127,7 +127,7 @@ do
   TARGET_IQN="$(cat &plugin;/targets.cfg | awk '{print $1}')"
   TARGET_IP="$(cat &plugin;/targets.cfg | awk '{print $2}')"
   TARGET_PORT="$(cat &plugin;/targets.cfg | awk '{print $3}')"
-  echo "---Trying to connect to target: ${TARGET_IQN} through ${TARGET_IP}:${TARGET_PORT}"
+  echo "---Trying to connect to target: ${TARGET_IQN} through ${TARGET_IP}:${TARGET_PORT}---"
   iscsiadm -m discovery -t sendtargets -p ${TARGET_IP}:${TARGET_PORT}
   sleep 0.5
   iscsiadm -m node -T ${TARGET_IQN} -p ${TARGET_IP}:${TARGET_PORT} --login
