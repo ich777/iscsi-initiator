@@ -71,6 +71,10 @@ DL_URL="https://github.com/ich777/iscsi-initiator/releases/download/$KERNEL_V"
 #Check for old packages
 rm -rf $(ls -d &plugin;/packages/* | grep -v "${KERNEL_V%%-*}")
 
+if [ ! -d "&plugin;/packages/${KERNEL_V%%-*}" ]; then
+  mkdir -p "&plugin;/packages/${KERNEL_V%%-*}"
+fi
+
 download() {
 #Download Open-iSCSI Package
 if wget -q -nc --show-progress --progress=bar:force:noscroll -O "&plugin;/packages/${KERNEL_V%%-*}/${PACKAGE}-1.txz" "${DL_URL}/${PACKAGE}-1.txz" ; then
