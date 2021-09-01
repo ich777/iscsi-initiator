@@ -115,8 +115,10 @@ install() {
 /sbin/installpkg "&plugin;/packages/${KERNEL_V%%-*}/${PACKAGE}-1.txz"
 depmod -a
 /sbin/modprobe iscsi_tcp
-sleep 1
-iscsid --config=&plugin;/iscsid.conf --initiatorname=&plugin;/initiatorname.cfg
+}
+
+start_daemon() {
+  iscsid --config=&plugin;/iscsid.conf --initiatorname=&plugin;/initiatorname.cfg
 }
 
 load_targets() {
@@ -139,16 +141,24 @@ check
 #Check if iSCSI initiator module is already enabled
 if [ -z "$(lsmod | grep "iscsi_tcp")" ]; then
   echo
-  echo "-----Installing and loading Kernel Modulesfor Open-iSCSI------"
+  echo "-----Installing and loading Kernel Modules for Open-iSCSI-----"
   install > /dev/null
-  if [ ! -z &plugin;/targets.cfg ]; then
-    load_targets
-  fi
 else
   echo
   echo "----------------Kernel Modules already enabled----------------"
 fi
 
+if [ -z "$(pidof iscsid)" ]; then
+  echo
+  echo "--------------------Starting iSCSI Daemon---------------------"
+  start_daemon
+  if [ ! -z &plugin;/targets.cfg ]; then
+    load_targets
+  fi
+else
+  echo
+  echo "-----------------iSCSI Daemon already started-----------------"
+fi
 
 echo
 echo "-------------Installation of Open iSCSI successful-------------"
