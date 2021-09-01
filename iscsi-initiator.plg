@@ -26,7 +26,7 @@ rm -f $(ls &plugin;/iscsi.initiator*.txz 2>/dev/null|grep -v '&version;')
 </FILE>
 
 <FILE Name="&plugin;/iscsi.initiator-&version;.txz" Run="upgradepkg --install-new">
-<URL>https://raw.githubusercontent.com/ich777/&name;/master/packages/iscsi-initiator-&version;.txz</URL>
+<URL>https://raw.githubusercontent.com/ich777/&name;/master/packages/iscsi.initiator-&version;.txz</URL>
 <MD5>&md5;</MD5>
 </FILE>
 
