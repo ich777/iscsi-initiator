@@ -178,7 +178,7 @@ echo "------------------------------------"
 echo "---Uninstalling Open iSCSI plugin---"
 echo "------------------------------------"
 echo
-echo "Logging out from all connected iSCSI sessions!"
+echo "---Logging out from all connected iSCSI sessions, please wait!---"
 echo
 iscsiadm -m node --logout
 sleep 0.5
