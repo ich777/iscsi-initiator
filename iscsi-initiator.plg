@@ -2,19 +2,19 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "iscsi-initiator">
 <!ENTITY author    "ich777">
-<!ENTITY version   "2021.09.01">
-<!ENTITY md5       "5da00f51862bf717743e33f98a93c09c">
+<!ENTITY version   "2021.09.02">
+<!ENTITY md5       "6afafc7eda9c8a002d605484bcdf87f9">
 <!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY plugin    "/boot/config/plugins/&name;">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/ich777/&name;/master/&name;.plg">
 ]>
 
-<PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.10.0-rc2d" support="https://forums.unraid.net/topic/108650-plugin-intel-gvt-g/">
+<PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.9.2" support="https://forums.unraid.net/topic/92865-support-ich777-nvidiadvbzfsiscsimft-kernel-helperbuilder-docker/">
 
 <CHANGES>
 
-###2021.08.31
+###2021.09.02
 - Initial Release
 
 </CHANGES>
@@ -34,7 +34,7 @@ rm -f $(ls &plugin;/iscsi.initiator*.txz 2>/dev/null|grep -v '&version;')
 <INLINE>
 **iSCSI Initiator**
 
-Missing
+This Plugin allows you to connect to one or more iSCSI Target(s) and mount the Volume(s) to unRAID.
 </INLINE>
 </FILE>
 
