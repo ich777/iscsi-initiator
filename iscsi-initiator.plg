@@ -118,7 +118,7 @@ depmod -a
 }
 
 start_daemon() {
-  iscsid --config=&plugin;/iscsid.conf --initiatorname=&plugin;/initiatorname.cfg
+  echo "iscsid --config=&plugin;/iscsid.conf --initiatorname=&plugin;/initiatorname.cfg" | at now
 }
 
 load_targets() {
