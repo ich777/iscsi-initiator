@@ -1,0 +1,171 @@
+Menu="Utilities"
+Title="iSCSI Initiator"
+Icon="iscsi-initiator.png"
+---
+<?php
+//Get initiator name
+$initiator_name = shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh get_initiator_name");
+
+//Get initiator name
+$active_sessions = shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh get_active_sessions");
+
+$filename = "/boot/config/plugins/iscsi-initiator/targets.cfg";
+$eachlines = file($filename, FILE_IGNORE_NEW_LINES);
+?>
+
+<script>
+//Don't execute commands again if page is refreshed
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+
+<script>
+//Disable submit button if no radio button is selected
+$(function(){
+    $("input[type='radio']").change(function(){
+
+        $("input[type='submit']").prop("disabled", false);
+        //Or
+        //$("input[type='submit']").removeAttr("disabled");
+    });
+});
+</script>
+
+<h1 style="text-align: center;"><span style="color: #800000;">iSCSI Initator</span></a></h1>
+<p style="text-align: center;">This Plugin allows you to connect to one or more iSCSI Target(s) and mount the Volume(s) to unRAID.</p>
+
+<div style="width: 50%; float:left">
+    <div id="title">
+        <span class="right"></span>
+    </div>
+    <table class="settings">
+     <td><b><font size="+1">Initiator Name:</font></b></td>
+     <tr>
+     <td style="color:blue; width: 100%"><b><?php echo $initiator_name;?></b></td>
+     </tr>
+        <tr>
+            <td><b><font size="+1">Change Initiator Name:</font></b></td>
+        </tr>
+        <tr>
+        <?
+        $targetcheck = `cat /boot/config/plugins/iscsi-initiator/targets.cfg`;
+        if (isset($targetcheck ) === true && trim($targetcheck ) !== ''):
+        ?>
+        <tr>
+          <td><b><font>The Initiator name can only be changed when no Target is defined!</font></b><td/>
+        <? else: ?>
+        <form id="s" method="post" autocomplete="off">
+          <tr style="height:20px;">
+            <td><input type = "text" style="width: 400px;" name = "initiatorname" placeholder="Custom IQN eg: iqn.0000-00.org.linux:xxxxxxxxxxx" required>
+            <input type="submit" name="changeInitiatorname" value="Change">
+            </td>
+        </form>
+        <? endif; ?>
+        </tr>
+    </table>
+</div>
+
+<div style="width: 50%; float:right">
+    <div id="title">
+        <span class="left"></span>
+    </div>
+    <table class="settings">
+    <tr>
+    <td><p><b><font size="+1">Defined Targets:</font></b><p/><td/>
+    <tr/>
+        <tr>
+        <td style = "width: 100%">
+          <?
+          if (isset($targetcheck ) === true && trim($targetcheck ) !== ''):
+          ?>
+          <form id="s" method="post" >
+          <?php
+          foreach($eachlines as $lines){
+          $arr = explode(" ", $lines);
+          $lines2 = implode(" ", $arr);
+          ?>
+          <input type="radio" name="targetrm" value="<?php echo $lines2;?>" /> 
+          <?php echo $lines2;?>
+          <?php
+            }
+          ?>
+          <p><input name="removetarget" disabled="disabled" type="submit" value="Remove & Disconnect"/></p>
+          </form>
+          <? else: ?>
+          <p><b><font color = "tomato">No Targets defined!</font></b></p>
+          <? endif; ?>
+          </td>
+        </tr>
+    </table>
+</div>
+
+
+
+
+
+<div>
+<div id="title">
+  <span/>
+</div>
+<p style="text-align: left;"><b><font size="+1">Create Connection:</font></b></p>
+<form id="s" method="post" autocomplete="off">
+<tr style="height:20px;">
+    <td><input type = "text" style="width: 400px;" name = "targetiqn" placeholder="Target IQN eg: iqn.0000-00.org.linux:xxxxxxxxxxx" required></td>
+    <td> <input type = "text" style="width: 110px;" name = "targetipaddress" placeholder="IP Address" required></td>
+    <td> <input type = "text" style="width: 45px;" name = "targetport" placeholder="Port" value = "3260" required></td>
+</tr>
+    <td>
+    <input type="submit" name="createTarget" value="Create & Connect">
+    </td>
+</form>
+</div>
+
+<div>
+<div id="title">
+  <span/>
+</div>
+<p style="text-align: center;"><b><font size="+1">Active iSCSI sessions:</font></b></p>
+<table style="margin-left: auto; margin-right: auto; width: 1050px">
+<br/>
+<tr>
+<td>
+<?
+$activeSessions = `iscsiadm --mode session | sed 's/$/<br>/'`;
+if (isset($activeSessions ) === true && trim($activeSessions ) !== ''):
+?>
+<td><p style="font-family: Monaco, monospace;"><b><?php echo $activeSessions;?></p></td>
+<? else: ?>
+<td><p style="font-family: Monaco, monospace;"><b>No sessions active!</p></td>
+<? endif; ?>
+</td>
+</tr>
+</table>
+</div>
+
+<?php
+if(isset($_POST['changeInitiatorname'])) {
+$initiatorname = $_POST["initiatorname"];
+shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh change_initiator_name $initiatorname");
+echo '<script>parent.window.location.reload();</script>';
+}
+?>
+
+<?php
+if(isset($_POST['removetarget'])) {
+$targetrm = $_POST["targetrm"];
+shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh remove_target $targetrm");
+echo '<script>parent.window.location.reload();</script>';
+}
+?>
+
+
+<?php
+if(isset($_POST['createTarget'])) {
+$targetiqn = $_POST["targetiqn"];
+$targetipaddress = $_POST["targetipaddress"];
+$targetport = $_POST["targetport"];
+shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh create_target $targetiqn $targetipaddress $targetport");
+echo '<script>parent.window.location.reload();</script>';
+}
+?>
