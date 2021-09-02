@@ -2,4 +2,4 @@
 
 This is the repository for the Unraid iSCSI Initiator plugin.
 
-Support Thread: https://forums.unraid.net/topic/92865-support-ich777-nvidiadvbzfsiscsimft-kernel-helperbuilder-docker/
+Support Thread: https://forums.unraid.net/topic/113270-plugin-iscsi-initiator/
