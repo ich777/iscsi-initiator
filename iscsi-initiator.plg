@@ -2,7 +2,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "iscsi-initiator">
 <!ENTITY author    "ich777">
-<!ENTITY version   "2021.09.02">
+<!ENTITY version   "2021.09.13">
 <!ENTITY md5       "df2263b2db6a05300f5881957e652cdf">
 <!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
@@ -13,6 +13,9 @@
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.9.2" support="https://forums.unraid.net/topic/113270-plugin-iscsi-initiator/">
 
 <CHANGES>
+
+###2021.09.13
+- Fixed bug where iscsid.conf was not created on USB Boot device
 
 ###2021.09.02
 - Initial Release
@@ -44,13 +47,6 @@ This Plugin allows you to connect to one or more iSCSI Target(s) and mount the V
 #Create initiator file if not found
 if [ ! -f "&plugin;/initiatorname.cfg" ]; then
   echo "InitiatorName=iqn.2005-08.net.unraid:$(uuidgen -r)" > "&plugin;/initiatorname.cfg"
-fi
-
-#Create config file if not found
-if [ ! -f "&plugin;/iscsid.conf" ]; then
-  cp /etc/iscsi/iscsid.conf &plugin;/iscsid.conf
-else
-  rm -rf /etc/iscsi/iscsid.conf
 fi
 
 #Create targets file if not found
@@ -116,6 +112,13 @@ install() {
 depmod -a
 /sbin/modprobe iscsi_tcp
 }
+
+#Create config file if not found
+if [ ! -f "&plugin;/iscsid.conf" ]; then
+  cp /etc/iscsi/iscsid.conf &plugin;/iscsid.conf
+else
+  rm -rf /etc/iscsi/iscsid.conf
+fi
 
 start_daemon() {
   echo "iscsid --config=&plugin;/iscsid.conf --initiatorname=&plugin;/initiatorname.cfg" | at now
