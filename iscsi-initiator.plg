@@ -2,8 +2,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "iscsi-initiator">
 <!ENTITY author    "ich777">
-<!ENTITY version   "2021.09.13">
-<!ENTITY md5       "df2263b2db6a05300f5881957e652cdf">
+<!ENTITY version   "2021.09.17">
+<!ENTITY md5       "4bc89c4793f818014ab98134efffe6fa">
 <!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY plugin    "/boot/config/plugins/&name;">
@@ -13,6 +13,9 @@
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.9.2" support="https://forums.unraid.net/topic/113270-plugin-iscsi-initiator/">
 
 <CHANGES>
+
+###2021.09.17
+- Fixed plugin to escape variables properly
 
 ###2021.09.13
 - Fixed bug where iscsid.conf was not created on USB Boot device
@@ -113,13 +116,6 @@ depmod -a
 /sbin/modprobe iscsi_tcp
 }
 
-#Create config file if not found
-if [ ! -f "&plugin;/iscsid.conf" ]; then
-  cp /etc/iscsi/iscsid.conf &plugin;/iscsid.conf
-else
-  rm -rf /etc/iscsi/iscsid.conf
-fi
-
 start_daemon() {
   echo "iscsid --config=&plugin;/iscsid.conf --initiatorname=&plugin;/initiatorname.cfg" | at now
 }
@@ -149,6 +145,14 @@ if [ -z "$(lsmod | grep "iscsi_tcp")" ]; then
 else
   echo
   echo "----------------Kernel Modules already enabled----------------"
+fi
+
+#Create config file if not found
+if [ ! -f "&plugin;/iscsid.conf" ]; then
+  cp /etc/iscsi/iscsid.conf &plugin;/iscsid.conf
+  rm -rf /etc/iscsi/iscsid.conf
+else
+  rm -rf /etc/iscsi/iscsid.conf
 fi
 
 if [ -z "$(pidof iscsid)" ]; then
