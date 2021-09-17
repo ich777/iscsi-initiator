@@ -86,7 +86,7 @@ $(function(){
           $lines2 = implode(" ", $arr);
           ?>
           <input type="radio" name="targetrm" value="<?php echo $lines2;?>" /> 
-          <?php echo $lines2;?>
+          <?php echo $lines2;?><br>
           <?php
             }
           ?>
@@ -146,7 +146,7 @@ if (isset($activeSessions ) === true && trim($activeSessions ) !== ''):
 <?php
 if(isset($_POST['changeInitiatorname'])) {
 $initiatorname = $_POST["initiatorname"];
-shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh change_initiator_name $initiatorname");
+shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh change_initiator_name ".escapeshellarg($initiatorname)."");
 echo '<script>parent.window.location.reload();</script>';
 }
 ?>
@@ -154,7 +154,7 @@ echo '<script>parent.window.location.reload();</script>';
 <?php
 if(isset($_POST['removetarget'])) {
 $targetrm = $_POST["targetrm"];
-shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh remove_target $targetrm");
+shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh remove_target ".escapeshellarg($targetrm)."");
 echo '<script>parent.window.location.reload();</script>';
 }
 ?>
@@ -165,7 +165,7 @@ if(isset($_POST['createTarget'])) {
 $targetiqn = $_POST["targetiqn"];
 $targetipaddress = $_POST["targetipaddress"];
 $targetport = $_POST["targetport"];
-shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh create_target $targetiqn $targetipaddress $targetport");
+shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh create_target ".escapeshellarg($targetiqn)." ".escapeshellarg($targetipaddress)." ".escapeshellarg($targetport)."");
 echo '<script>parent.window.location.reload();</script>';
 }
 ?>
