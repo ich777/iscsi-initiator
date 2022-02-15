@@ -2,8 +2,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "iscsi-initiator">
 <!ENTITY author    "ich777">
-<!ENTITY version   "2021.11.11">
-<!ENTITY md5       "9802266335b08d41380cd289bb755b6e">
+<!ENTITY version   "2022.02.15">
+<!ENTITY md5       "011b50e6b305fd2883ca380b82a0e7b7">
 <!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY plugin    "/boot/config/plugins/&name;">
@@ -13,6 +13,9 @@
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.9.2" support="https://forums.unraid.net/topic/113270-plugin-iscsi-initiator/">
 
 <CHANGES>
+
+###2022.02.15
+- Bumped version - based on Open-iSCSI v2.1.6
 
 ###2021.11.11
 - Updated plugin to be compatible with 6.10.0-rc3
