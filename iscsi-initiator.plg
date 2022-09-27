@@ -2,8 +2,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "iscsi-initiator">
 <!ENTITY author    "ich777">
-<!ENTITY version   "2022.03.17">
-<!ENTITY md5       "011b50e6b305fd2883ca380b82a0e7b7">
+<!ENTITY version   "2022.09.27">
+<!ENTITY md5       "4c73fd8757978f6e76a4fff985ec0ab2">
 <!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY plugin    "/boot/config/plugins/&name;">
@@ -13,6 +13,9 @@
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.9.2" support="https://forums.unraid.net/topic/113270-plugin-iscsi-initiator/">
 
 <CHANGES>
+
+###2022.09.27
+- Bumped version - based on Open-iSCSI v2.1.8
 
 ###2022.03.17
 - Fixed bug where only first target is connected on boot - thank you wraith1385 for the report
