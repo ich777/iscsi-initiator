@@ -2,8 +2,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "iscsi-initiator">
 <!ENTITY author    "ich777">
-<!ENTITY version   "2022.09.27">
-<!ENTITY md5       "4c73fd8757978f6e76a4fff985ec0ab2">
+<!ENTITY version   "2023.03.28">
+<!ENTITY md5       "70950b01ba9da86241e17977d48db072">
 <!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY plugin    "/boot/config/plugins/&name;">
@@ -13,6 +13,11 @@
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.9.2" support="https://forums.unraid.net/topic/113270-plugin-iscsi-initiator/">
 
 <CHANGES>
+
+###2023.03.28
+- Fixed issue when changing Initiator Name
+- Added Reconnect button
+- Show more information when establishing/removing connection
 
 ###2022.09.27
 - Bumped version - based on Open-iSCSI v2.1.8
