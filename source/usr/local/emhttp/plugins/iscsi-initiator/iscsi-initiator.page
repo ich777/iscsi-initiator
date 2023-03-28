@@ -4,10 +4,10 @@ Icon="iscsi-initiator.png"
 ---
 <?php
 //Get initiator name
-$initiator_name = shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh get_initiator_name");
+$initiator_name = parse_ini_file('/boot/config/plugins/iscsi-initiator/initiatorname.cfg');
 
 //Get initiator name
-$active_sessions = shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh get_active_sessions");
+$active_sessions = shell_exec("iscsiadm --mode session");
 
 $filename = "/boot/config/plugins/iscsi-initiator/targets.cfg";
 $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
@@ -21,15 +21,48 @@ $eachlines = file($filename, FILE_IGNORE_NEW_LINES);
 </script>
 
 <script>
+function createTarget(form) {
+  var targetiqn = form.targetiqn.value;;
+  var targetipaddress = form.targetipaddress.value;
+  var targetport = form.targetport.value;
+  var messageElement = document.getElementById("message");
+  if (targetiqn === "" || targetipaddress === "" || targetport === "") {
+    messageElement.textContent = "Please fill in all fields!";
+	return;
+  }
+
+  openBox("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh&arg1=create_target&arg2="+targetiqn+"&arg3="+targetipaddress+"&arg4="+targetport,"Connecting...",600,800,true);
+  return false;
+}
+
+function removeTarget(form) {
+  var targetrm = form.targetrm.value.split(' ');
+
+  openBox("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh&arg1=remove_target&arg2="+targetrm[0]+"&arg3="+targetrm[1]+"&arg4="+targetrm[2],"Removing...",600,800,true);
+  return false;
+}
+
+function reconnectSingleTarget(form) {
+  var targetrm = form.targetrm.value.split(' ');
+
+  openBox("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh&arg1=reconnect_single&arg2="+targetrm[0]+"&arg3="+targetrm[1]+"&arg4="+targetrm[2],"Reconnecting...",600,800,true);
+  return false;
+}
+</script>
+
+<script>
 //Disable submit button if no radio button is selected
 $(function(){
     $("input[type='radio']").change(function(){
 
-        $("input[type='submit']").prop("disabled", false);
-        //Or
-        //$("input[type='submit']").removeAttr("disabled");
+        $("input[type='button']").prop("disabled", false);
     });
 });
+
+function activateRequired() {
+  var inputField = document.getElementById("myInputField");
+  inputField.setAttribute("required", true);
+}
 </script>
 
 <h1 style="text-align: center;"><span style="color: #800000;">iSCSI Initator</span></a></h1>
@@ -42,7 +75,7 @@ $(function(){
     <table class="settings">
      <td><b><font size="+1">Initiator Name:</font></b></td>
      <tr>
-     <td style="color:blue; width: 100%"><b><?php echo $initiator_name;?></b></td>
+     <td style="color:blue; width: 100%"><b><?php echo $initiator_name['InitiatorName'];?></b></td>
      </tr>
         <tr>
             <td><b><font size="+1">Change Initiator Name:</font></b></td>
@@ -79,7 +112,7 @@ $(function(){
           <?
           if (isset($targetcheck ) === true && trim($targetcheck ) !== ''):
           ?>
-          <form id="s" method="post" >
+          <form id="s" method="post">
           <?php
           foreach($eachlines as $lines){
           $arr = explode(" ", $lines);
@@ -90,7 +123,9 @@ $(function(){
           <?php
             }
           ?>
-          <p><input name="removetarget" disabled="disabled" type="submit" value="Remove & Disconnect"/></p>
+          <p><input type="button" disabled="disabled" value="Remove & Disconnect" onclick="removeTarget(this.form)"/>
+		  <input type="button" disabled="disabled" value="Reconnect" onclick="reconnectSingleTarget(this.form)"/></p>
+
           </form>
           <? else: ?>
           <p><b><font color = "tomato">No Targets defined!</font></b></p>
@@ -112,11 +147,11 @@ $(function(){
 <form id="s" method="post" autocomplete="off">
 <tr style="height:20px;">
     <td><input type = "text" style="width: 400px;" name = "targetiqn" placeholder="Target IQN eg: iqn.0000-00.org.linux:xxxxxxxxxxx" required></td>
-    <td> <input type = "text" style="width: 110px;" name = "targetipaddress" placeholder="IP Address" required></td>
-    <td> <input type = "text" style="width: 45px;" name = "targetport" placeholder="Port" value = "3260" required></td>
+    <td><input type = "text" style="width: 110px;" name = "targetipaddress" placeholder="IP Address" required></td>
+    <td><input type = "text" style="width: 45px;" name = "targetport" placeholder="Port" value = "3260" required></td>
 </tr>
     <td>
-    <input type="submit" name="createTarget" value="Create & Connect">
+    <input type="button" value="Create & Connect" onclick="createTarget(this.form)"><b style="color: red;" id="message"></b>
     </td>
 </form>
 </div>
@@ -147,25 +182,6 @@ if (isset($activeSessions ) === true && trim($activeSessions ) !== ''):
 if(isset($_POST['changeInitiatorname'])) {
 $initiatorname = $_POST["initiatorname"];
 shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh change_initiator_name ".escapeshellarg($initiatorname)."");
-echo '<script>parent.window.location.reload();</script>';
-}
-?>
-
-<?php
-if(isset($_POST['removetarget'])) {
-$targetrm = $_POST["targetrm"];
-shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh remove_target ".escapeshellarg($targetrm)."");
-echo '<script>parent.window.location.reload();</script>';
-}
-?>
-
-
-<?php
-if(isset($_POST['createTarget'])) {
-$targetiqn = $_POST["targetiqn"];
-$targetipaddress = $_POST["targetipaddress"];
-$targetport = $_POST["targetport"];
-shell_exec("/usr/local/emhttp/plugins/iscsi-initiator/include/exec.sh create_target ".escapeshellarg($targetiqn)." ".escapeshellarg($targetipaddress)." ".escapeshellarg($targetport)."");
 echo '<script>parent.window.location.reload();</script>';
 }
 ?>
