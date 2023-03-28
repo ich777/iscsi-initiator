@@ -3,7 +3,7 @@
 <!ENTITY name      "iscsi-initiator">
 <!ENTITY author    "ich777">
 <!ENTITY version   "2023.03.28">
-<!ENTITY md5       "8a89032533707ac6dedcc85600339966">
+<!ENTITY md5       "f9b448177f9a49dfae783942991cdb49">
 <!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY plugin    "/boot/config/plugins/&name;">
