@@ -2,8 +2,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "iscsi-initiator">
 <!ENTITY author    "ich777">
-<!ENTITY version   "2023.03.28">
-<!ENTITY md5       "70950b01ba9da86241e17977d48db072">
+<!ENTITY version   "2023.06.15">
+<!ENTITY md5       "5dbe940db36f1c1f467f477e1d218560">
 <!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY plugin    "/boot/config/plugins/&name;">
@@ -13,6 +13,9 @@
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.9.2" support="https://forums.unraid.net/topic/113270-plugin-iscsi-initiator/">
 
 <CHANGES>
+
+###2023.06.15
+- Bumped version - based on Open-iSCSI v2.1.9
 
 ###2023.03.28
 - Fixed issue when changing Initiator Name
