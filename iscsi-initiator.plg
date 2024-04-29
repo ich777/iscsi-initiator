@@ -2,7 +2,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "iscsi-initiator">
 <!ENTITY author    "ich777">
-<!ENTITY version   "2023.06.15">
+<!ENTITY version   "2024.04.29">
 <!ENTITY md5       "5dbe940db36f1c1f467f477e1d218560">
 <!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
@@ -13,6 +13,9 @@
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.9.2" support="https://forums.unraid.net/topic/113270-plugin-iscsi-initiator/">
 
 <CHANGES>
+
+###2024.04.29
+- Fix an issue for Unraid 6.13.0+ where libcrypto is not found
 
 ###2023.06.15
 - Bumped version - based on Open-iSCSI v2.1.9
@@ -54,6 +57,11 @@ rm -f $(ls &plugin;/iscsi.initiator*.txz 2>/dev/null|grep -v '&version;')
 <FILE Name="&plugin;/iscsi.initiator-&version;.txz" Run="upgradepkg --install-new">
 <URL>https://raw.githubusercontent.com/ich777/&name;/master/packages/iscsi.initiator-&version;.txz</URL>
 <MD5>&md5;</MD5>
+</FILE>
+
+<FILE Name="&plugin;/openssl-solibs-1.1.1m-x86_64-1.txz">
+<URL>https://raw.githubusercontent.com/ich777/&name;/master/packages/openssl-solibs-1.1.1m-x86_64-1.txz</URL>
+<MD5>3056e5e00f8cabd61d3c604f04c84afa</MD5>
 </FILE>
 
 <FILE Name="&plugdir;/README.md">
@@ -197,6 +205,12 @@ if [ -z "$(pidof iscsid)" ]; then
 else
   echo
   echo "-----------------iSCSI Daemon already started-----------------"
+fi
+
+if [ ! -f /lib64/libcrypto.so.1.1 ]; then
+  echo
+  echo "------------libcrypto 1.1 not found, installing...-------------"
+  installpkg &plugin;/openssl-solibs-1.1.1m-x86_64-1.txz > /dev/null 2>&amp;1
 fi
 
 echo
