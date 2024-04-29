@@ -237,7 +237,7 @@ iscsiadm -m node --logout
 sleep 0.5
 kill $(pidof iscsid)
 # Remove plugin related files
-removepkg iscsi.initiator-&version;
+removepkg iscsi.initiator-&version; > /dev/null 2>&amp;1
 rm -rf &plugin;
 rm -rf &plugdir;
 echo
