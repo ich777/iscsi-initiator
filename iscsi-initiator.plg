@@ -85,6 +85,13 @@ if [ ! -f "&plugin;/targets.cfg" ]; then
   touch &plugin;/targets.cfg
 fi
 
+#Install libcrypto 1.1 if not found
+if [ ! -f /lib64/libcrypto.so.1.1 ]; then
+  echo
+  echo "------------libcrypto 1.1 not found, installing...-------------"
+  installpkg &plugin;/openssl-solibs-1.1.1m-x86_64-1.txz > /dev/null 2>&amp;1
+fi
+
 start_daemon() {
   echo "iscsid --config=&plugin;/iscsid.conf --initiatorname=&plugin;/initiatorname.cfg" | at now
 }
@@ -205,12 +212,6 @@ if [ -z "$(pidof iscsid)" ]; then
 else
   echo
   echo "-----------------iSCSI Daemon already started-----------------"
-fi
-
-if [ ! -f /lib64/libcrypto.so.1.1 ]; then
-  echo
-  echo "------------libcrypto 1.1 not found, installing...-------------"
-  installpkg &plugin;/openssl-solibs-1.1.1m-x86_64-1.txz > /dev/null 2>&amp;1
 fi
 
 echo
