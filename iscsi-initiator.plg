@@ -2,8 +2,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "iscsi-initiator">
 <!ENTITY author    "ich777">
-<!ENTITY version   "2024.04.29">
-<!ENTITY md5       "5dbe940db36f1c1f467f477e1d218560">
+<!ENTITY version   "2024.05.31">
+<!ENTITY md5       "76f3724fcb3a4e23bbf05f56a40d73ae">
 <!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY plugin    "/boot/config/plugins/&name;">
@@ -13,6 +13,9 @@
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.9.2" support="https://forums.unraid.net/topic/113270-plugin-iscsi-initiator/">
 
 <CHANGES>
+
+###2024.05.31
+- Bumped version - based on Open-iSCSI v2.1.10
 
 ###2024.04.29
 - Fix an issue for Unraid 6.13.0+ where libcrypto is not found
