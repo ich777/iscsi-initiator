@@ -2,7 +2,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "iscsi-initiator">
 <!ENTITY author    "ich777">
-<!ENTITY version   "2024.05.31">
+<!ENTITY version   "2025.03.17">
 <!ENTITY md5       "76f3724fcb3a4e23bbf05f56a40d73ae">
 <!ENTITY launch    "Settings/&name;">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
@@ -13,6 +13,9 @@
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.9.2" support="https://forums.unraid.net/topic/113270-plugin-iscsi-initiator/">
 
 <CHANGES>
+
+###2025.03.17
+- Compatibility update for Unraid 7.1.0-beta.1
 
 ###2024.05.31
 - Bumped version - based on Open-iSCSI v2.1.10
@@ -113,7 +116,7 @@ do
 done &lt; "&plugin;/targets.cfg"
 }
 
-if [ ! "$(find /lib/modules/*/kernel/drivers -name iscsi_tcp.ko.xz 2>/dev/null)" ]; then
+if [ ! "$(find /lib/modules/*/kernel/drivers \( -name iscsi_tcp.ko.xz -o -name iscsi_tcp.ko \) 2>/dev/null)" ]; then
   #Wait for Network and timeout after 30 seconds
   HOST="8.8.8.8"
   for i in {1..10}; do
